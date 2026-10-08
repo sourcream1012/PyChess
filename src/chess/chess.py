@@ -15,6 +15,18 @@ class Board:
             x, y = piece.position
             self.grid[x][y] = piece
 
+    def __str__(self):
+        board_str = ""
+        for y in range(8):
+            for x in range(8):
+                piece = self.grid[x][y]
+                if piece:
+                    board_str += f"{piece.type[0].upper() if piece.team == 'white' else piece.type[0].lower()} "
+                else:
+                    board_str += ". "
+            board_str += "\n"
+        return board_str
+
 class Chess:
     # Chess class represents the main game and handles the game loop, rendering, and the game state management
     def __init__(self):
