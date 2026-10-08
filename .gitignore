@@ -10,6 +10,3 @@ ENV/
 
 # Local configuration and secrets
 .env
-
-# Assets
-assets/
