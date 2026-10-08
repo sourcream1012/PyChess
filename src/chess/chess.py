@@ -1,7 +1,13 @@
 import pygame
+from pathlib import Path
 from pieces import Pieces
 
 pygame.init()
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+ROOT = SCRIPT_DIR.parent.parent
+BLACK_IMG_DIR = ROOT / "assets" / "img" / "black"
+WHITE_IMG_DIR = ROOT / "assets" / "img" / "White"
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 800
@@ -35,8 +41,19 @@ class Board:
                 )
                 piece = self.grid[x][y]
                 if piece:
-                    # Will add the piece image later
-                    continue
+                    img_path = None
+
+                    if piece.team == "black":
+                        img_path = BLACK_IMG_DIR / f"{piece.team}_{piece.type}.png"
+                    else:
+                        img_path = WHITE_IMG_DIR / f"{piece.team}_{piece.type}.png"
+
+                    image = pygame.image.load(img_path)
+                    screen.blit(
+                        image, 
+                        (x * TILE_SIZE, y * TILE_SIZE),
+                        (0, 0, image.get_width(), image.get_height())
+                    )
 
     def __str__(self) -> str:
         board_str = ""

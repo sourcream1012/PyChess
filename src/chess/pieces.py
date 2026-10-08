@@ -1,12 +1,3 @@
-PIECE_TYPES = ["king", "queen", "rook", "bishop", "knight", "pawn"]
-MAX_NUM_EACH_PIECE = {
-    PIECE_TYPES[0]: 1,
-    PIECE_TYPES[1]: 1,
-    PIECE_TYPES[2]: 2,
-    PIECE_TYPES[3]: 2,
-    PIECE_TYPES[4]: 2,
-    PIECE_TYPES[5]: 8
-}
 BEGINNING_POSITIONS = [
     [ #black pieces
         [0, 0, "rook", "black"],
