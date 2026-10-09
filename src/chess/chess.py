@@ -1,6 +1,7 @@
 import pygame
 from pathlib import Path
 from pieces import Pieces
+from pieces import Piece
 
 pygame.init()
 
@@ -55,6 +56,24 @@ class Board:
                         (0, 0, image.get_width(), image.get_height())
                     )
 
+    def piece_is_on_tile(self, x: int, y: int) -> bool:
+        if self.grid[x][y]:
+            return True
+        return False
+
+    def get_piece_on_tile(self, x: int, y: int) -> object:
+        if self.grid[x][y] == 0: return None
+        return self.grid[x][y]
+
+    def highlight_selected_piece(self, screen: pygame.Surface, selectedPiece: Piece) -> None:
+        x, y = selectedPiece.position
+        pygame.draw.rect(
+            screen,
+            (255, 0, 0),
+            (x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE),
+            2
+        )
+
     def __str__(self) -> str:
         board_str = ""
         for y in range(8):
@@ -74,6 +93,7 @@ class Chess:
         self.running = True
         self.board = Board()
         self.board.init_board_pieces()
+        self.selected_piece = None
 
     def start(self) -> None:
         while self.running:
@@ -81,9 +101,25 @@ class Chess:
                 if event.type == pygame.QUIT:
                     self.running = False
 
+                if event.type == pygame.MOUSEBUTTONUP:
+                    x, y = event.pos
+                    col = x // TILE_SIZE
+                    row = y // TILE_SIZE
+                    self.selected_piece = self.board.get_piece_on_tile(col, row)
+                    
+                    print(
+                        f"Clicked on tile ({col}, {row})\n"
+                        f"Piece on tile: {self.board.piece_is_on_tile(col, row)}\n"
+                        f"Piece details: {self.selected_piece}\n"
+                    )
+                    
+
             self.screen.fill(BACKGROUND_COLOR)
 
             self.board.draw_board(self.screen)
+            
+            if self.selected_piece:
+                self.board.highlight_selected_piece(self.screen, self.selected_piece)
            
             pygame.display.flip()
 

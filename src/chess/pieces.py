@@ -57,6 +57,9 @@ class Piece:
         self.team = team
         self.position = position
 
+    def __str__(self):
+        return f"{self.team} {self.type} at {self.position}"
+
 # Eventually I'll add methods for each piece to define their movement rules which are then checked by the Chess class inside of chess.py which acts as the "server" for the chess game
 class Pawn(Piece):
     def __init__(self, team, position):
