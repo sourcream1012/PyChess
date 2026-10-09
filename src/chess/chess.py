@@ -56,6 +56,26 @@ class Board:
                         (0, 0, image.get_width(), image.get_height())
                     )
 
+    def get_white_pieces(self) -> list:
+        white_pieces = []
+        for piece in self.pieces.pieces:
+            if piece.team == "white":
+                white_pieces.append(piece)
+        return white_pieces
+
+    def get_black_pieces(self) -> list:
+        black_pieces = []
+        for piece in self.pieces.pieces:
+            if piece.team == "black":
+                black_pieces.append(piece)
+        return black_pieces
+
+    def move_piece(self, piece: Piece, new_x: int, new_y: int) -> None:
+        old_x, old_y = piece.position
+        self.grid[old_x][old_y] = 0
+        self.grid[new_x][new_y] = piece
+        piece.position = (new_x, new_y)
+
     def piece_is_on_tile(self, x: int, y: int) -> bool:
         if self.grid[x][y]:
             return True
@@ -91,9 +111,16 @@ class Chess:
     def __init__(self):
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.running = True
+        self.your_team = "white"
+
         self.board = Board()
         self.board.init_board_pieces()
+
         self.selected_piece = None
+        self.pieces = {
+            "white": self.board.get_white_pieces(),
+            "black": self.board.get_black_pieces()
+        }
 
     def start(self) -> None:
         while self.running:
@@ -105,7 +132,30 @@ class Chess:
                     x, y = event.pos
                     col = x // TILE_SIZE
                     row = y // TILE_SIZE
+
+                    # Checks if you already have a selected piece to see if you can move it
+                    if self.selected_piece != None:
+                        possible_moves = self.selected_piece.possible_moves(self.pieces[self.your_team])
+                        if (col, row) in possible_moves:
+                            self.board.move_piece(self.selected_piece, col, row)
+                            self.selected_piece = None
+                            continue
+
                     self.selected_piece = self.board.get_piece_on_tile(col, row)
+
+                    # Checks if there is a piece on the clicked tile
+                    if not self.selected_piece:
+                        print(
+                            f"Clicked on tile ({col}, {row})\n"
+                            f"Piece on tile: {self.board.piece_is_on_tile(col, row)}\n"
+                            f"Piece details: no piece on tile\n"
+                        )
+                        continue
+
+                    # If the selected piece is not on your team it unselects it
+                    if self.selected_piece.team != self.your_team:
+                        self.selected_piece = None
+                        continue
                     
                     print(
                         f"Clicked on tile ({col}, {row})\n"
@@ -117,7 +167,7 @@ class Chess:
             self.screen.fill(BACKGROUND_COLOR)
 
             self.board.draw_board(self.screen)
-            
+
             if self.selected_piece:
                 self.board.highlight_selected_piece(self.screen, self.selected_piece)
            
